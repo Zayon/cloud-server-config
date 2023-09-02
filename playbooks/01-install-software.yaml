@@ -1,0 +1,21 @@
+- name: Install software
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: apt update
+      apt:
+        update_cache: yes
+
+    - name: apt install
+      apt:
+        name:
+          - htop
+          - net-tools
+          - rsyslog
+          - fail2ban
+          - ca-certificates
+          - curl
+          - gnupg
+        state: present
+

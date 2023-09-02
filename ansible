@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+if [ $# -lt 2 ]; then
+    echo "Usage: $0 <username> <ip> [other_parameters...]"
+    exit 1
+fi
+
+username="$1"
+ip="$2"
+shift 2
+
+docker run -it --rm \
+    -e SSH_AUTH_SOCK='/tmp/agent.sock' \
+    -v "${HOME}/.ssh/known_hosts/:/root/.ssh/known_hosts:ro" \
+    -v "${SSH_AUTH_SOCK}:/tmp/agent.sock" \
+    -v "$(pwd):/app" \
+    zayon/ansible:local \
+        -i "$ip," \
+        -e "ansible_ssh_user=$username" \
+        "$@"
+

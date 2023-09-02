@@ -1,0 +1,35 @@
+- name: Initial server setup
+  hosts: all
+  become: yes
+  vars_prompt:
+    - name: "user_password"
+      prompt: "Enter password for new user"
+      private: yes
+
+  tasks:
+    - name: Copy sshd_config
+      copy:
+        src: ../files/etc/ssh/sshd_config
+        dest: "/etc/ssh/sshd_config"
+        owner: 'root'
+        group: 'root'
+        mode: '0644'
+
+    - name: Add new user
+      user:
+        name: zayon
+        groups:
+          - sudo
+          - adm
+        append: yes
+        createhome: yes
+        state: present
+        password: "{{ user_password | password_hash('bcrypt') }}"
+        shell: "/bin/bash"
+
+    - name: Enable bash aliases
+      replace:
+        path: /home/zayon/.bashrc
+        regexp: '#alias '
+        replace: 'alias '
+

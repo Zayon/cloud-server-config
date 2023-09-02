@@ -1,0 +1,29 @@
+Port 22
+AllowGroups sudo
+PermitRootLogin no
+UsePAM yes
+X11Forwarding no
+PrintMotd no
+AcceptEnv LANG LC_*
+
+Subsystem	sftp	/usr/lib/openssh/sftp-server
+
+ClientAliveInterval 300
+
+# disable port forwarding
+AllowStreamLocalForwarding no
+GatewayPorts no
+PermitTunnel no
+
+# alow tcp forwarding
+AllowTcpForwarding yes
+
+# don't allow login if the account has an empty password
+PermitEmptyPasswords no
+
+# ignore .rhosts and .shosts
+IgnoreRhosts yes
+
+# verify hostname matches IP
+UseDNS no
+

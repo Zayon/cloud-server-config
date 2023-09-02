@@ -1,0 +1,17 @@
+- name: test server setup
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Get current date on remote host
+      command: date '+%Y-%m-%d-%H-%M-%S'
+      register: current_date
+
+    - name: Write the current date to a file in the user's home directory
+      copy:
+        content: 'hello world'
+        dest: "/home/zayon/{{ current_date.stdout }}.txt"
+        owner: 'zayon'
+        group: 'zayon'
+        mode: '0644'
+
