@@ -4,11 +4,8 @@ services:
     cap_add:
       - NET_ADMIN
     container_name: swag
-    environment:
-      PGID: "${PGID}"
-      PUID: "${PUID}"
-      TZ: "${TZ}"
     env_file:
+      - common.env
       - swag.secrets
     hostname: "${DOCKER_HOSTNAME}"
     image: lscr.io/linuxserver/swag:latest

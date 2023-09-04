@@ -1,28 +1,25 @@
-name: nextcloud
+name: mariadb
 services:
-  nextcloud:
-    container_name: nextcloud
+  mariadb:
+    container_name: mariadb
     env_file:
       - common.env
+      - mariadb.secrets
     hostname: "${DOCKER_HOSTNAME}"
-    image: lscr.io/linuxserver/nextcloud:latest
+    image: lscr.io/linuxserver/mariadb:latest
     logging:
       driver: json-file
       options:
         max-file: "10"
         max-size: 200k
     networks:
-      - proxy-nextcloud
       - db-nextcloud
     restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${CONTAINER_BASE_DIR}/nextcloud/config:/config
-      - ${CONTAINER_BASE_DIR}/nextcloud/data:/data
+      - ${CONTAINER_BASE_DIR}/mariadb:/config
 
 networks:
-  proxy-nextcloud:
-    external: true
   db-nextcloud:
     external: true
 
