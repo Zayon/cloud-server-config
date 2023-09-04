@@ -6,7 +6,7 @@ set -euo pipefail
 # Function to display usage instructions.
 usage() {
   echo "cm - Container Manager"
-  echo "Usage: $0 COMMAND SERVICE"
+  echo "Usage: cm COMMAND SERVICE"
   echo "Commands:"
   echo "  help      Show this help message"
   echo "  up        Start the service"
