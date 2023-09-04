@@ -10,7 +10,7 @@ WHITE   := $(shell tput -Txterm setaf 7)
 RESET   := $(shell tput -Txterm sgr0)
 
 define MAKEFILE_HELP_HEADER
-~~~~ Makefile Help ~~~~
+ ~~~~ Makefile Help ~~~~
 endef
 export MAKEFILE_HELP_HEADER
 

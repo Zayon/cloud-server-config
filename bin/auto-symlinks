@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Source directory containing the files
+SRC_DIR=$(realpath "./files/home")
+
+# Destination directory
+DEST_DIR="$HOME"
+
+# Dry-run flag
+DRY_RUN=false
+
+# Check for dry-run option
+if [ "$1" == "--dry-run" ]; then
+  DRY_RUN=true
+fi
+
+# Loop through all files and subdirectories
+find $SRC_DIR -type f -o -type l | while read -r src_path; do
+  # Create the corresponding destination path
+  dest_path="${src_path/#$SRC_DIR/$DEST_DIR}"
+
+  # Dry-run: Show the operations without actually doing them
+  if [ "$DRY_RUN" == "true" ]; then
+    echo "Would symlink $src_path to $dest_path"
+    continue
+  fi
+
+  # Create parent directories as needed
+  mkdir -p "$(dirname "$dest_path")"
+
+  # Create the symlink
+  ln -sf "$src_path" "$dest_path"
+done
+

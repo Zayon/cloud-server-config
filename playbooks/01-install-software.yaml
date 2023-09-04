@@ -17,5 +17,8 @@
           - ca-certificates
           - curl
           - gnupg
+          - cron
+          - borgbackup
+          - python3-pip
         state: present
 

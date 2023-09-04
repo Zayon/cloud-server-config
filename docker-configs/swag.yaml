@@ -1,0 +1,33 @@
+name: swag
+services:
+  swag:
+    cap_add:
+      - NET_ADMIN
+    container_name: swag
+    environment:
+      PGID: "${PGID}"
+      PUID: "${PUID}"
+      TZ: "${TZ}"
+    env_file:
+      - swag.secrets
+    hostname: "${DOCKER_HOSTNAME}"
+    image: lscr.io/linuxserver/swag:latest
+    logging:
+      driver: json-file
+      options:
+        max-file: "10"
+        max-size: 200k
+    networks:
+      - proxy-nextcloud
+    ports:
+      - 0.0.0.0:80:80/tcp
+      - 0.0.0.0:443:443/tcp
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${CONTAINER_BASE_DIR}/swag:/config
+
+networks:
+  proxy-nextcloud:
+    external: true
+

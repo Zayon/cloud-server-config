@@ -1,0 +1,30 @@
+name: nextcloud
+services:
+  nextcloud:
+    container_name: nextcloud
+    environment:
+      PGID: "${PGID}"
+      PUID: "${PUID}"
+      TZ: "${TZ}"
+    hostname: "${DOCKER_HOSTNAME}"
+    image: lscr.io/linuxserver/nextcloud:latest
+    logging:
+      driver: json-file
+      options:
+        max-file: "10"
+        max-size: 200k
+    networks:
+      - proxy-nextcloud
+      - db-nextcloud
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${CONTAINER_BASE_DIR}/nextcloud/config:/config
+      - ${CONTAINER_BASE_DIR}/nextcloud/data:/data
+
+networks:
+  proxy-nextcloud:
+    external: true
+  db-nextcloud:
+    external: true
+
