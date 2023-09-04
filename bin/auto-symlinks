@@ -19,6 +19,12 @@ find $SRC_DIR -type f -o -type l | while read -r src_path; do
   # Create the corresponding destination path
   dest_path="${src_path/#$SRC_DIR/$DEST_DIR}"
 
+  # Check if the symlink or file already exists at the destination
+  if [ -e "$dest_path" ]; then
+    echo "Skipping: $dest_path already exists."
+    continue
+  fi
+
   # Dry-run: Show the operations without actually doing them
   if [ "$DRY_RUN" == "true" ]; then
     echo "Would symlink $src_path to $dest_path"
@@ -27,6 +33,8 @@ find $SRC_DIR -type f -o -type l | while read -r src_path; do
 
   # Create parent directories as needed
   mkdir -p "$(dirname "$dest_path")"
+
+  echo "Symlinking $src_path -> $dest_path"
 
   # Create the symlink
   ln -sf "$src_path" "$dest_path"
