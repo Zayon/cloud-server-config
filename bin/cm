@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# Exit on error, uninitialized variable, or error in a pipeline.
+set -euo pipefail
+
+# Function to display usage instructions.
+usage() {
+  echo "cm - Container Manager"
+  echo "Usage: $0 COMMAND SERVICE"
+  echo "Commands:"
+  echo "  help      Show this help message"
+  echo "  up        Start the service"
+  echo "  logs      Show logs for the service"
+  exit 1
+}
+
+# Function to handle the 'up' command.
+up_service() {
+  local service=$1
+  echo "Starting service: $service"
+  # Insert your logic to start the service here.
+}
+
+# Function to handle the 'logs' command.
+logs_service() {
+  local service=$1
+  echo "Showing logs for service: $service"
+  # Insert your logic to show logs for the service here.
+}
+
+# Check if at least two arguments are passed to the script.
+if [[ $# -lt 2 ]]; then
+  usage
+fi
+
+# Command to be executed.
+command=$1
+# Service to be operated on.
+service=$2
+
+# Handle commands.
+case $command in
+  help)
+    usage
+    ;;
+  up)
+    up_service "$service"
+    ;;
+  logs)
+    logs_service "$service"
+    ;;
+  *)
+    echo "Invalid command: $command"
+    usage
+    ;;
+esac

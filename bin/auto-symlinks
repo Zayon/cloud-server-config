@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Source directory containing the files
-SRC_DIR=$(realpath "./files/home")
+SERVER_CONFIG_ROOT=$(realpath $(dirname $(dirname "$0")))
+SRC_DIR=$(realpath "$SERVER_CONFIG_ROOT/files/home")
 
 # Destination directory
 DEST_DIR="$HOME"
