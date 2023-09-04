@@ -4,7 +4,7 @@ services:
     container_name: nextcloud
     env_file:
       - common.env
-    hostname: "${DOCKER_HOSTNAME}"
+    hostname: "${DOCKER_HOSTNAME}-nextcloud"
     image: lscr.io/linuxserver/nextcloud:latest
     logging:
       driver: json-file

@@ -7,7 +7,7 @@ services:
     env_file:
       - common.env
       - swag.secrets
-    hostname: "${DOCKER_HOSTNAME}"
+    hostname: "${DOCKER_HOSTNAME}-swag"
     image: lscr.io/linuxserver/swag:latest
     logging:
       driver: json-file
@@ -16,6 +16,7 @@ services:
         max-size: 200k
     networks:
       - proxy-nextcloud
+      - proxy-freshrss
     ports:
       - 0.0.0.0:80:80/tcp
       - 0.0.0.0:443:443/tcp
@@ -26,5 +27,8 @@ services:
 
 networks:
   proxy-nextcloud:
+    external: true
+
+  proxy-freshrss:
     external: true
 

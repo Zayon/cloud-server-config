@@ -1,29 +1,28 @@
-name: mariadb
+name: freshrss
 services:
-  mariadb:
-    container_name: mariadb
+  freshrss:
+    container_name: freshrss
     env_file:
       - common.env
-      - mariadb.secrets
-    hostname: "${DOCKER_HOSTNAME}-mariadb"
-    image: lscr.io/linuxserver/mariadb:latest
+    hostname: "${DOCKER_HOSTNAME}-freshrss"
+    image: lscr.io/linuxserver/freshrss:latest
     logging:
       driver: json-file
       options:
         max-file: "10"
         max-size: 200k
     networks:
-      - db-nextcloud
       - db-freshrss
+      - proxy-freshrss
     restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${CONTAINER_BASE_DIR}/mariadb:/config
+      - ${CONTAINER_BASE_DIR}/freshrss:/config
 
 networks:
-  db-nextcloud:
+  db-freshrss:
     external: true
 
-  db-freshrss:
+  proxy-freshrss:
     external: true
 
