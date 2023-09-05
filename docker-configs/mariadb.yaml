@@ -10,11 +10,14 @@ services:
     logging:
       driver: json-file
       options:
-        max-file: "10"
-        max-size: 200k
+        max-file: ${DOCKERLOGGING_MAXFILE}
+        max-size: ${DOCKERLOGGING_MAXSIZE}
     networks:
       - db-nextcloud
       - db-freshrss
+      - db-wallabag
+      - db-vaultwarden
+      - db-onlyoffice
     restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -23,7 +26,12 @@ services:
 networks:
   db-nextcloud:
     external: true
-
   db-freshrss:
+    external: true
+  db-wallabag:
+    external: true
+  db-vaultwarden:
+    external: true
+  db-onlyoffice:
     external: true
 

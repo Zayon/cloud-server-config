@@ -1,28 +1,25 @@
-name: freshrss
+name: mail-to-rss
 services:
-  freshrss:
-    container_name: freshrss
+  mail-to-rss:
+    container_name: mail-to-rss
     env_file:
       - common.env
-    hostname: "${DOCKER_HOSTNAME}-freshrss"
-    image: lscr.io/linuxserver/freshrss:latest
+      - mail-to-rss.secrets
+    hostname: "${DOCKER_HOSTNAME}-mail-to-rss"
+    image: zayon/mail-to-rss:beta
     logging:
       driver: json-file
       options:
         max-file: ${DOCKERLOGGING_MAXFILE}
         max-size: ${DOCKERLOGGING_MAXSIZE}
     networks:
-      - db-freshrss
-      - proxy-freshrss
+      - proxy-mail-to-rss
     restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${CONTAINER_BASE_DIR}/freshrss:/config
+      - ${CONTAINER_BASE_DIR}/mail-to-rss:/app/var
 
 networks:
-  db-freshrss:
-    external: true
-
-  proxy-freshrss:
+  proxy-mail-to-rss:
     external: true
 

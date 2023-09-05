@@ -12,11 +12,15 @@ services:
     logging:
       driver: json-file
       options:
-        max-file: "10"
-        max-size: 200k
+        max-file: ${DOCKERLOGGING_MAXFILE}
+        max-size: ${DOCKERLOGGING_MAXSIZE}
     networks:
       - proxy-nextcloud
       - proxy-freshrss
+      - proxy-wallabag
+      - proxy-vaultwarden
+      - proxy-mail-to-rss
+      - proxy-onlyoffice
     ports:
       - 0.0.0.0:80:80/tcp
       - 0.0.0.0:443:443/tcp
@@ -28,7 +32,14 @@ services:
 networks:
   proxy-nextcloud:
     external: true
-
   proxy-freshrss:
+    external: true
+  proxy-wallabag:
+    external: true
+  proxy-vaultwarden:
+    external: true
+  proxy-mail-to-rss:
+    external: true
+  proxy-onlyoffice:
     external: true
 

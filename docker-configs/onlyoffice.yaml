@@ -1,0 +1,29 @@
+name: onlyoffice
+services:
+  onlyoffice:
+    container_name: onlyoffice
+    env_file:
+      - onlyoffice.secrets
+    hostname: "${DOCKER_HOSTNAME}-onlyoffice"
+    image: onlyoffice/documentserver:7.1
+    logging:
+      driver: json-file
+      options:
+        max-file: ${DOCKERLOGGING_MAXFILE}
+        max-size: ${DOCKERLOGGING_MAXSIZE}
+    networks:
+      - proxy-onlyoffice
+      - db-onlyoffice
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${CONTAINER_BASE_DIR}/onlyoffice/data:/var/www/onlyoffice/Data
+      - ${CONTAINER_BASE_DIR}/onlyoffice/log:/var/log/onlyoffice
+      - ${CONTAINER_BASE_DIR}/onlyoffice/lib:/var/lib/onlyoffice
+
+networks:
+  proxy-onlyoffice:
+    external: true
+  db-onlyoffice:
+    external: true
+

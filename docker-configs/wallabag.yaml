@@ -1,28 +1,27 @@
-name: freshrss
+name: wallabag
 services:
-  freshrss:
-    container_name: freshrss
+  wallabag:
+    container_name: wallabag
     env_file:
       - common.env
-    hostname: "${DOCKER_HOSTNAME}-freshrss"
-    image: lscr.io/linuxserver/freshrss:latest
+      - wallabag.secrets
+    hostname: ${DOCKER_HOSTNAME}-wallabag
+    image: wallabag/wallabag
     logging:
       driver: json-file
       options:
         max-file: ${DOCKERLOGGING_MAXFILE}
         max-size: ${DOCKERLOGGING_MAXSIZE}
-    networks:
-      - db-freshrss
-      - proxy-freshrss
     restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ${CONTAINER_BASE_DIR}/freshrss:/config
+    networks:
+      - proxy-wallabag
+      - db-wallabag
 
 networks:
-  db-freshrss:
+  db-wallabag:
     external: true
 
-  proxy-freshrss:
+  proxy-wallabag:
     external: true
-

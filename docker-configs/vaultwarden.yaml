@@ -1,0 +1,28 @@
+name: vaultwarden
+services:
+  vaultwarden:
+    container_name: vaultwarden
+    image: vaultwarden/server:latest
+    env_file:
+      - common.env
+      - vaultwarden.secrets
+    hostname: ${DOCKER_HOSTNAME}-vaultwarden
+    logging:
+      driver: json-file
+      options:
+        max-file: ${DOCKERLOGGING_MAXFILE}
+        max-size: ${DOCKERLOGGING_MAXSIZE}
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${CONTAINER_BASE_DIR}/vaultwarden:/data
+    networks:
+      - proxy-vaultwarden
+      - db-vaultwarden
+
+networks:
+  db-vaultwarden:
+    external: true
+  proxy-vaultwarden:
+    external: true
+
