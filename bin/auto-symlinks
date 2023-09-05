@@ -6,12 +6,12 @@ SRC_DIR=$(realpath "$SERVER_CONFIG_ROOT/files/home")
 # Destination directory
 DEST_DIR="$HOME"
 
-# Dry-run flag
-DRY_RUN=false
+# Dry-run flag defaults to true
+DRY_RUN=true
 
-# Check for dry-run option
-if [ "$1" == "--dry-run" ]; then
-  DRY_RUN=true
+# Check for execute option
+if [ "$1" == "--execute" ]; then
+  DRY_RUN=false
 fi
 
 # Loop through all files and subdirectories
