@@ -4,16 +4,18 @@
 
 ⚠️ Be sure to open an ssh session manually before in case it breaks
 
-First build the image: `make build-ansible-image`
-
 ```bash
-./ansible <user> <ip> playbooks/00-initial-setup.yaml -K
+ansible-playbook \
+    -i "$ip," -e "ansible_ssh_user=$username" \
+    playbooks/00-initial-setup.yaml -K
 ```
 
 Then follow [initial setup documentation](docs/initial-setup.md)
 
 ```bash
-./ansible <user> <ip> playbooks/01-install-software.yaml
+ansible-playbook \
+    -i "$ip," -e "ansible_ssh_user=$username" \
+    playbooks/01-install-software.yaml
 ```
 
 

@@ -5,52 +5,209 @@ set -euo pipefail
 
 # Function to display usage instructions.
 usage() {
-  echo "cm - Container Manager"
-  echo "Usage: cm COMMAND SERVICE"
-  echo "Commands:"
-  echo "  help      Show this help message"
-  echo "  up        Start the service"
-  echo "  logs      Show logs for the service"
-  exit 1
+    echo "cm - Container Manager"
+    echo "Usage: cm COMMAND [COMMAND_OPTIONS] SERVICE(S)"
+    echo "Commands:"
+    echo "  help      Show this help message"
+    echo "  up        Update / Reload / Start the service(s)"
+    echo "  edit      Edit service configuration"
+    echo "  dir       Move to the service directory"
+    echo "  logs      Show nginx service logs (from swag)"
 }
 
-# Function to handle the 'up' command.
-up_service() {
-  local service=$1
-  echo "Starting service: $service"
-  # Insert your logic to start the service here.
+if [[ -z "${SERVER_CONFIG_ROOT:-}" ]]; then
+    SERVER_CONFIG_ROOT="$(realpath $(dirname $(dirname "$0")))"
+fi
+
+if [[ -z "${CONTAINERS_DATA_DIR:-}" ]]; then
+    CONTAINERS_DATA_DIR="$HOME/containers_data"
+fi
+
+###
+### UP COMMAND ###
+###
+up_usage() {
+    echo "Usage:   cm up [OPTIONS] SERVICE(S) [OPTIONS]"
+    echo ""
+    echo "  Update / Reload / Start the service(s)"
+    echo ""
+    echo "Options:"
+    echo "  -h, --help      Show this help message"
+    echo "  -v, --verbose   Show verbose output"
 }
 
-# Function to handle the 'logs' command.
-logs_service() {
-  local service=$1
-  echo "Showing logs for service: $service"
-  # Insert your logic to show logs for the service here.
+up_command() {
+    local verbose=false
+    local services
+    local command_args=($@)
+
+    for i in "${!command_args[@]}"; do
+        if [ "${command_args[i]}" == "--help" ] || [ "${command_args[i]}" == "-h" ]; then
+            up_usage
+            exit 0
+        fi
+
+        if [ "${command_args[i]}" == "--verbose" ] || [ "${command_args[i]}" == "-v" ]; then
+            verbose=true
+            unset 'command_args[i]'
+        fi
+    done
+
+    services="${command_args[@]}"
+
+    # split the services into an array
+    IFS=' ' read -r -a services <<< "$services"
+
+    for service in "${services[@]}"; do
+        if [ "$verbose" == "true" ]; then
+            echo "Starting service $service with command: "
+            echo "docker-compose -f $SERVER_CONFIG_ROOT/docker-configs/$service.yaml up -d"
+        fi
+
+        docker-compose -f "$SERVER_CONFIG_ROOT/docker-configs/$service.yaml" up -d
+    done
 }
+
+###
+### EDIT COMMAND ###
+###
+edit_usage() {
+    echo "Usage:   cm edit [OPTIONS] SERVICE [OPTIONS]"
+    echo ""
+    echo "  Edit service configuration"
+    echo ""
+    echo "Options:"
+    echo "  -h, --help      Show this help message"
+}
+
+edit_command() {
+    local command_args=($@)
+    local service=$1
+
+    for i in "${!command_args[@]}"; do
+        if [ "${command_args[i]}" == "--help" ] || [ "${command_args[i]}" == "-h" ]; then
+            edit_usage
+            exit 0
+        fi
+    done
+
+    ${EDITOR:-vim} "$SERVER_CONFIG_ROOT/docker-configs/$service.yaml"
+}
+
+###
+### DIR COMMAND ###
+###
+dir_usage() {
+    echo "Usage:   cm dir [OPTIONS] SERVICE"
+    echo ""
+    echo "  Move to the service directory"
+    echo ""
+    echo "Options:"
+    echo "  -h, --help      Show this help message"
+}
+
+dir_command() {
+    local service=$1
+
+    if [ -z "$service" ]; then
+        dir_usage
+        exit 1
+    fi
+
+    if [ "$service" == "--help" ] || [ "$service" == "-h" ]; then
+        dir_usage
+        exit 0
+    fi
+
+    if [ ! -d "$CONTAINERS_DATA_DIR/$service" ]; then
+        echo "Service $service does not exist"
+        exit 1
+    fi
+
+    cd "$CONTAINERS_DATA_DIR/$service"
+}
+
+###
+### LOGS COMMAND ###
+###
+logs_usage() {
+    echo "Usage:   cm logs [OPTIONS] SERVICE [OPTIONS]"
+    echo ""
+    echo "  Show nginx service logs (from swag)"
+    echo ""
+    echo "Options:"
+    echo "  -h, --help      Show this help message"
+}
+
+logs_command() {
+    local service
+    local command_args=($@)
+    local follow=""
+
+    for i in "${!command_args[@]}"; do
+        if [ "${command_args[i]}" == "--help" ] || [ "${command_args[i]}" == "-h" ]; then
+            logs_usage
+            exit 0
+        fi
+
+        if [ "${command_args[i]}" == "--follow" ] || [ "${command_args[i]}" == "-f" ]; then
+            follow="-F"
+            unset 'command_args[i]'
+        fi
+    done
+
+    # if command_args has more than one element left
+    if [ "${#command_args[@]}" -gt 1 ]; then
+        echo "Too many arguments, only 1 service supported"
+        logs_usage
+        exit 1
+    fi
+
+    # reindex array
+    command_args=("${command_args[@]}")
+    # get remaining element
+    service="${command_args[0]}"
+
+    echo "tail $follow $CONTAINERS_DATA_DIR/swag/log/nginx/${service}_access.log $CONTAINERS_DATA_DIR/swag/log/nginx/${service}_error.log"
+}
+
+###
+### GLOBAL SCRIPT ###
+###
 
 # Check if at least two arguments are passed to the script.
 if [[ $# -lt 2 ]]; then
   usage
+  exit 1
 fi
 
-# Command to be executed.
 command=$1
-# Service to be operated on.
-service=$2
+shift 1
+command_args=$@
 
 # Handle commands.
 case $command in
-  help)
-    usage
-    ;;
-  up)
-    up_service "$service"
-    ;;
-  logs)
-    logs_service "$service"
-    ;;
-  *)
-    echo "Invalid command: $command"
-    usage
-    ;;
+    help)
+        usage
+        ;;
+    up)
+        up_command "$command_args"
+        ;;
+    edit)
+        edit_command "$command_args"
+        ;;
+    dir)
+        dir_command "$command_args"
+        ;;
+    logs)
+        logs_command "$command_args"
+        ;;
+    *)
+        echo "Invalid command: $command"
+        usage
+        exit 1
+        ;;
 esac
+
+exit 0
+
