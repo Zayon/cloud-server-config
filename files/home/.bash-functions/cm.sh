@@ -1,7 +1,4 @@
-#!/bin/bash
-
-# Exit on error, uninitialized variable, or error in a pipeline.
-set -euo pipefail
+cm() {
 
 # Function to display usage instructions.
 usage() {
@@ -44,7 +41,7 @@ up_command() {
     for i in "${!command_args[@]}"; do
         if [ "${command_args[i]}" == "--help" ] || [ "${command_args[i]}" == "-h" ]; then
             up_usage
-            exit 0
+            return 0
         fi
 
         if [ "${command_args[i]}" == "--verbose" ] || [ "${command_args[i]}" == "-v" ]; then
@@ -87,7 +84,7 @@ edit_command() {
     for i in "${!command_args[@]}"; do
         if [ "${command_args[i]}" == "--help" ] || [ "${command_args[i]}" == "-h" ]; then
             edit_usage
-            exit 0
+            return 0
         fi
     done
 
@@ -111,17 +108,17 @@ dir_command() {
 
     if [ -z "$service" ]; then
         dir_usage
-        exit 1
+        return 1
     fi
 
     if [ "$service" == "--help" ] || [ "$service" == "-h" ]; then
         dir_usage
-        exit 0
+        return 0
     fi
 
     if [ ! -d "$CONTAINERS_DATA_DIR/$service" ]; then
         echo "Service $service does not exist"
-        exit 1
+        return 1
     fi
 
     cd "$CONTAINERS_DATA_DIR/$service"
@@ -147,7 +144,7 @@ logs_command() {
     for i in "${!command_args[@]}"; do
         if [ "${command_args[i]}" == "--help" ] || [ "${command_args[i]}" == "-h" ]; then
             logs_usage
-            exit 0
+            return 0
         fi
 
         if [ "${command_args[i]}" == "--follow" ] || [ "${command_args[i]}" == "-f" ]; then
@@ -160,7 +157,7 @@ logs_command() {
     if [ "${#command_args[@]}" -gt 1 ]; then
         echo "Too many arguments, only 1 service supported"
         logs_usage
-        exit 1
+        return 1
     fi
 
     # reindex array
@@ -168,7 +165,7 @@ logs_command() {
     # get remaining element
     service="${command_args[0]}"
 
-    echo "tail $follow $CONTAINERS_DATA_DIR/swag/log/nginx/${service}_access.log $CONTAINERS_DATA_DIR/swag/log/nginx/${service}_error.log"
+    tail $follow "$CONTAINERS_DATA_DIR/swag/log/nginx/${service}_access.log" "$CONTAINERS_DATA_DIR/swag/log/nginx/${service}_error.log"
 }
 
 ###
@@ -177,8 +174,8 @@ logs_command() {
 
 # Check if at least two arguments are passed to the script.
 if [[ $# -lt 2 ]]; then
-  usage
-  exit 1
+    usage
+    return 1
 fi
 
 command=$1
@@ -205,9 +202,58 @@ case $command in
     *)
         echo "Invalid command: $command"
         usage
-        exit 1
+        return 1
         ;;
 esac
 
-exit 0
+return 0
+}
+
+__cm_fetch_available_services() {
+    local service_name service_path
+    local -a services # Declare services as an indexed array
+
+    if [[ -z "${SERVER_CONFIG_ROOT:-}" ]]; then
+        echo "SERVER_CONFIG_ROOT is not set"
+        return 1
+    fi
+
+    while read -r service_path; do
+        # strip the .yaml extension
+        service_name="${service_path%.yaml}"
+        # strip the path prefix
+        service_name="${service_name##*/}"
+        services+=("$service_name")
+    done < <(find "$SERVER_CONFIG_ROOT/docker-configs" -type f -name "*.yaml")
+
+    echo "${services[@]}"
+}
+
+_cm_completions()
+{
+    local cur_word prev_word command_list service_list
+
+    cur_word="${COMP_WORDS[COMP_CWORD]}"
+    prev_word="${COMP_WORDS[COMP_CWORD-1]}"
+
+    COMPREPLY=()
+
+    # Commands for cm
+    if [[ ${#COMP_WORDS[@]} -eq 2 ]]; then
+        # Completing the command after "cm"
+        command_list="up edit dir logs"
+        COMPREPLY=( $(compgen -W "${command_list}" -- ${cur_word}) )
+        return 0
+    fi
+
+    if [[ ${#COMP_WORDS[@]} -ge 3 ]]; then
+        service_list=$(__cm_fetch_available_services)
+        COMPREPLY=( $(compgen -W "${service_list}" -- ${cur_word}) )
+
+        return 0
+    fi
+}
+
+# Register our completion function.
+complete -F _cm_completions cm
 
