@@ -21,6 +21,7 @@ services:
       - proxy-vaultwarden
       - proxy-mail-to-rss
       - proxy-onlyoffice
+      - proxy-ntfy
     ports:
       - 0.0.0.0:80:80/tcp
       - 0.0.0.0:443:443/tcp
@@ -41,5 +42,7 @@ networks:
   proxy-mail-to-rss:
     external: true
   proxy-onlyoffice:
+    external: true
+  proxy-ntfy:
     external: true
 

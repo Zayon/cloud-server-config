@@ -121,20 +121,32 @@ edit_usage() {
     echo ""
     echo "Options:"
     echo "  -h, --help      Show this help message"
+    echo "  -s, --secrets   Edit the service secrets"
 }
 
 edit_command() {
     local command_args=($@)
     local service=$1
+    local edit_secrets=false
 
     for i in "${!command_args[@]}"; do
         if [ "${command_args[i]}" == "--help" ] || [ "${command_args[i]}" == "-h" ]; then
             edit_usage
             return 0
         fi
+
+        if [ "${command_args[i]}" == "--secrets" ] || [ "${command_args[i]}" == "-s" ]; then
+            edit_secrets=true
+            unset 'command_args[i]'
+        fi
     done
 
-    ${EDITOR:-vim} "$SERVER_CONFIG_ROOT/docker-configs/$service.yaml"
+    if [ "$edit_secrets" == "true" ]; then
+        sensible-editor "$SERVER_CONFIG_ROOT/docker-configs/$service.secrets"
+        return 0
+    fi
+
+    sensible-editor "$SERVER_CONFIG_ROOT/docker-configs/$service.yaml"
 }
 
 ###
