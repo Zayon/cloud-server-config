@@ -20,3 +20,30 @@ Put the BORG_PASSPHRASE environment variable in /etc/environment
 ```
 BORG_PASSPHRASE=Passphrase
 ```
+
+## Configure bormatic
+
+Check `$HOME/.config/borgmatic/config.yaml`
+
+```
+editor $HOME/.config/borgmatic/config.yaml
+```
+
+## Add systemd service unit and timer
+
+The following files are needed:
+
+* `~/.config/systemd/user/borgmatic-backup.service`
+* `~/.config/systemd/user/borgmatic-backup.timer`
+
+Running `auto-symlinks --execute` should be enough.
+
+## Reload systemd deamon and activate timer
+
+```
+systemctl --user daemon-reload
+systemctl --user enable --now borgmatic-backup.timer
+
+# Check that the timer is activated
+systemctl --user list-timers
+```

@@ -1,0 +1,7 @@
+[Unit]
+Description=Borgmatic backup
+
+[Service]
+Type=oneshot
+ExecStart=/home/zayon/.local/bin/borgmatic --verbosity 1 --log-file-verbosity 1
+

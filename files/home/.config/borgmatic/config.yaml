@@ -1,20 +1,21 @@
-location:
-    source_directories:
-        - /home/zayon/containers_data
-    repositories:
-        - ssh://pi@localhost:65522/mnt/backup/tidus-backup
+source_directories:
+    - /home/zayon/containers_data
 
-retention:
-    keep_daily: 7
+repositories:
+    - path: ssh://pi@localhost:65522/mnt/backup/tidus-backups
+      label: pi
 
-storage:
-    encryption_passphrase: ${BORG_PASSPHRASE}
+keep_daily: 7
 
-hooks:
-    before_backup:
-        - echo "Starting backup"
-    after_backup:
-        - echo "Backup complete"
-    on_error:
-        - echo "Backup failed"
+encryption_passphrase: ${BORG_PASSPHRASE}
+
+before_backup:
+    - echo "Starting backup"
+    - curl -u :${NTFY_TOKEN} -d "Starting Backup ..." https://ntfy.zayon.eu/backups
+after_backup:
+    - echo "Backup complete"
+    - curl -u :${NTFY_TOKEN} -d "Backup finished" https://ntfy.zayon.eu/backups
+on_error:
+    - echo "Backup failed"
+    - curl -u :${NTFY_TOKEN} -d "🚨 Backup failed 🚨" https://ntfy.zayon.eu/backups
 
