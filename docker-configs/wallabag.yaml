@@ -4,7 +4,7 @@ services:
     container_name: wallabag
     env_file:
       - common.env
-      - wallabag.secrets
+      - secrets/wallabag.secrets
     hostname: ${DOCKER_HOSTNAME}-wallabag
     image: wallabag/wallabag
     logging:

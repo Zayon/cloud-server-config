@@ -142,7 +142,7 @@ edit_command() {
     done
 
     if [ "$edit_secrets" == "true" ]; then
-        sensible-editor "$SERVER_CONFIG_ROOT/docker-configs/$service.secrets"
+        sensible-editor "$SERVER_CONFIG_ROOT/docker-configs/secrets/$service.secrets"
         return 0
     fi
 

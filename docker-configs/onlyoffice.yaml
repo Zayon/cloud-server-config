@@ -3,7 +3,7 @@ services:
   onlyoffice:
     container_name: onlyoffice
     env_file:
-      - onlyoffice.secrets
+      - secrets/onlyoffice.secrets
     hostname: "${DOCKER_HOSTNAME}-onlyoffice"
     image: onlyoffice/documentserver:7.1
     logging:

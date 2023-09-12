@@ -1,0 +1,28 @@
+name: bookstack
+services:
+  bookstack:
+    container_name: bookstack
+    env_file:
+      - common.env
+      - bookstack.secrets
+    hostname: "${DOCKER_HOSTNAME}-bookstack"
+    image: lscr.io/linuxserver/bookstack:latest
+    logging:
+      driver: json-file
+      options:
+        max-file: ${DOCKERLOGGING_MAXFILE}
+        max-size: ${DOCKERLOGGING_MAXSIZE}
+    networks:
+      - db-bookstack
+      - proxy-bookstack
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${CONTAINER_BASE_DIR}/bookstack:/config
+
+networks:
+  db-bookstack:
+    external: true
+  proxy-bookstack:
+    external: true
+

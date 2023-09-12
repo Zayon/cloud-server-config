@@ -1,0 +1,22 @@
+name: syncthing
+services:
+  syncthing:
+    image: ghcr.io/linuxserver/syncthing:latest
+    container_name: syncthing
+    hostname: "${DOCKER_HOSTNAME}-syncthing"
+    env_file:
+      - common.env
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${CONTAINER_BASE_DIR}/syncthing:/config
+    networks:
+      - proxy-syncthing
+    ports:
+      - 0.0.0.0:22000:22000
+      - 0.0.0.0:21027:21027/udp
+    restart: unless-stopped
+
+networks:
+  proxy-syncthing:
+    external: true
+

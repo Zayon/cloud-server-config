@@ -4,7 +4,7 @@ services:
     container_name: mail-to-rss
     env_file:
       - common.env
-      - mail-to-rss.secrets
+      - secrets/mail-to-rss.secrets
     hostname: "${DOCKER_HOSTNAME}-mail-to-rss"
     image: zayon/mail-to-rss:beta
     logging:

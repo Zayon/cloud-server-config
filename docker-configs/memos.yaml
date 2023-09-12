@@ -1,0 +1,16 @@
+name: memos
+services:
+  memos:
+    image: neosmemo/memos:latest
+    container_name: memos
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ${CONTAINER_BASE_DIR}/memos:/var/opt/memos
+    restart: unless-stopped
+    networks:
+      - proxy-memos
+
+networks:
+  proxy-memos:
+    external: true
+

@@ -6,7 +6,7 @@ services:
     container_name: swag
     env_file:
       - common.env
-      - swag.secrets
+      - secrets/swag.secrets
     hostname: "${DOCKER_HOSTNAME}-swag"
     image: lscr.io/linuxserver/swag:latest
     logging:
@@ -22,6 +22,9 @@ services:
       - proxy-mail-to-rss
       - proxy-onlyoffice
       - proxy-ntfy
+      - proxy-syncthing
+      - proxy-bookstack
+      - proxy-memos
     ports:
       - 0.0.0.0:80:80/tcp
       - 0.0.0.0:443:443/tcp
@@ -44,5 +47,11 @@ networks:
   proxy-onlyoffice:
     external: true
   proxy-ntfy:
+    external: true
+  proxy-syncthing:
+    external: true
+  proxy-bookstack:
+    external: true
+  proxy-memos:
     external: true
 

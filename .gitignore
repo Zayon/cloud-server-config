@@ -1,2 +1,2 @@
-docker-configs/*.secrets
+docker-configs/secrets/*.secrets
 
