@@ -4,7 +4,7 @@ services:
     container_name: bookstack
     env_file:
       - common.env
-      - bookstack.secrets
+      - secrets/bookstack.secrets
     hostname: "${DOCKER_HOSTNAME}-bookstack"
     image: lscr.io/linuxserver/bookstack:latest
     logging:
