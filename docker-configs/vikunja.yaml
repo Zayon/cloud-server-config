@@ -1,0 +1,36 @@
+name: vikunja
+services:
+  vikunja-api:
+    container_name: vikunja
+    env_file:
+      - common.env
+      - secrets/vikunja.secrets
+    image: vikunja/api:latest
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${CONTAINER_BASE_DIR}/vikunja/files:/app/vikunja/files
+      - ${CONTAINER_BASE_DIR}/vikunja/db:/db
+    environment:
+      - VIKUNJA_DATABASE_TYPE=sqlite
+      - VIKUNJA_DATABASE_PATH=/db/vikunja.db
+      - VIKUNJA_SERVICE_FRONTENDURL=https://vikunja.zayon.eu/
+      - VIKUNJA_SERVICE_ENABLEREGISTRATION=false
+    networks:
+      - proxy-vikunja
+
+  vikunja-front:
+    container_name: vikunja-front
+    image: vikunja/frontend:latest
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    # environment:
+    #   - VIKUNJA_API_URL=https://vikunja.zayon.eu/
+    networks:
+      - proxy-vikunja
+
+networks:
+  proxy-vikunja:
+    external: true
+

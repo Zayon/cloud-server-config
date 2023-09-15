@@ -1,0 +1,24 @@
+name: jellyfin
+services:
+  jellyfin:
+    container_name: jellyfin
+    env_file:
+      - common.env
+    hostname: "${DOCKER_HOSTNAME}-jellyfin"
+    image: lscr.io/linuxserver/jellyfin:latest
+    networks:
+      - proxy-jellyfin
+    restart: unless-stopped
+    environment:
+      - JELLYFIN_DATA_DIR=/data
+      - JELLYFIN_CACHE_DIR=/cache
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${CONTAINER_BASE_DIR}/jellyfin/config:/config
+      - ${CONTAINER_BASE_DIR}/jellyfin/data:/data
+      - ${CONTAINER_BASE_DIR}/jellyfin/cache:/cache
+
+networks:
+  proxy-jellyfin:
+    external: true
+

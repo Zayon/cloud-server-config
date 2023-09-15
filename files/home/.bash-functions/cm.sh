@@ -32,10 +32,12 @@ up_usage() {
     echo "Options:"
     echo "  -h, --help      Show this help message"
     echo "  -v, --verbose   Show verbose output"
+    echo "  -r, --recreate  Recreate the service(s)"
 }
 
 up_command() {
     local verbose=false
+    local recreate=""
     local services
     local command_args=($@)
 
@@ -49,6 +51,11 @@ up_command() {
             verbose=true
             unset 'command_args[i]'
         fi
+
+        if [ "${command_args[i]}" == "--recreate" ] || [ "${command_args[i]}" == "-r" ]; then
+            recreate="--force-recreate"
+            unset 'command_args[i]'
+        fi
     done
 
     services="${command_args[@]}"
@@ -59,10 +66,10 @@ up_command() {
     for service in "${services[@]}"; do
         if [ "$verbose" == "true" ]; then
             echo "Starting service $service with command: "
-            echo "docker-compose -f $SERVER_CONFIG_ROOT/docker-configs/$service.yaml up -d"
+            echo "docker-compose -f $SERVER_CONFIG_ROOT/docker-configs/$service.yaml up $recreate -d"
         fi
 
-        docker compose -f "$SERVER_CONFIG_ROOT/docker-configs/$service.yaml" up -d
+        docker compose -f "$SERVER_CONFIG_ROOT/docker-configs/$service.yaml" up $recreate -d
     done
 }
 
@@ -126,8 +133,8 @@ edit_usage() {
 
 edit_command() {
     local command_args=($@)
-    local service=$1
     local edit_secrets=false
+    local service
 
     for i in "${!command_args[@]}"; do
         if [ "${command_args[i]}" == "--help" ] || [ "${command_args[i]}" == "-h" ]; then
@@ -140,6 +147,11 @@ edit_command() {
             unset 'command_args[i]'
         fi
     done
+
+    # reindex array
+    command_args=("${command_args[@]}")
+    # get remaining element
+    service="${command_args[0]}"
 
     if [ "$edit_secrets" == "true" ]; then
         sensible-editor "$SERVER_CONFIG_ROOT/docker-configs/secrets/$service.secrets"
