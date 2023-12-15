@@ -27,9 +27,13 @@ services:
       - proxy-memos
       - proxy-jellyfin
       - proxy-vikunja
+      - proxy-firefly
+      - media-stack
     ports:
       - 0.0.0.0:80:80/tcp
       - 0.0.0.0:443:443/tcp
+      - "[::]:80:80/tcp"
+      - "[::]:443:443/tcp"
     restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -59,5 +63,9 @@ networks:
   proxy-jellyfin:
     external: true
   proxy-vikunja:
+    external: true
+  proxy-firefly:
+    external: true
+  media-stack:
     external: true
 

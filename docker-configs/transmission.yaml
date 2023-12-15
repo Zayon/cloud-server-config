@@ -1,0 +1,25 @@
+name: transmission
+services:
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
+    env_file:
+      - common.env
+      - secrets/transmission.secrets
+    environment:
+      - UMASK=002
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${CONTAINER_BASE_DIR}/transmission:/config
+      - ${MEDIAS_DIR}:/data
+    networks:
+      - media-stack
+    ports:
+      - 0.0.0.0:51413:51413
+      - 0.0.0.0:51413:51413/udp
+    restart: unless-stopped
+
+networks:
+  media-stack:
+    external: true
+

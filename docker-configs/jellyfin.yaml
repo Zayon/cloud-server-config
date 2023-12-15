@@ -12,10 +12,11 @@ services:
     environment:
       - JELLYFIN_DATA_DIR=/data
       - JELLYFIN_CACHE_DIR=/cache
+      - UMASK=002
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${CONTAINER_BASE_DIR}/jellyfin/config:/config
-      - ${CONTAINER_BASE_DIR}/jellyfin/data:/data
+      - ${MEDIAS_DIR}/library:/data
       - ${CONTAINER_BASE_DIR}/jellyfin/cache:/cache
 
 networks:

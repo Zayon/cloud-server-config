@@ -7,6 +7,7 @@ usage() {
     echo "Commands:"
     echo "  help      Show this help message"
     echo "  up        Update / Start the service(s)"
+    echo "  pull      Pull the latest image(s)"
     echo "  restart   Restart the service(s)"
     echo "  edit      Edit service configuration"
     echo "  dir       Move to the service directory"
@@ -244,6 +245,37 @@ logs_command() {
 }
 
 ###
+### PULL COMMAND ###
+###
+pull_usage() {
+    echo "Usage:   cm pull [OPTIONS] SERVICE(S) [OPTIONS]"
+    echo ""
+    echo "  Pull image and recreate container using watchtower"
+    echo ""
+    echo "Options:"
+    echo "  -h, --help      Show this help message"
+}
+
+pull_command() {
+    local services
+    local command_args=($@)
+
+    for i in "${!command_args[@]}"; do
+        if [ "${command_args[i]}" == "--help" ] || [ "${command_args[i]}" == "-h" ]; then
+            pull_usage
+            return 0
+        fi
+    done
+
+    services="${command_args[@]}"
+
+    docker run --rm \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        containrrr/watchtower \
+        --run-once $services
+}
+
+###
 ### GLOBAL SCRIPT ###
 ###
 
@@ -270,6 +302,9 @@ case $command in
         ;;
     logs)
         logs_command "$command_args"
+        ;;
+    pull)
+        pull_command "$command_args"
         ;;
     *)
         echo "Invalid command: $command"

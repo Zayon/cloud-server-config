@@ -1,0 +1,21 @@
+name: radarr
+services:
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    env_file:
+      - common.env
+    environment:
+      - UMASK=002
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${CONTAINER_BASE_DIR}/radarr/:/config
+      - ${MEDIAS_DIR}:/data
+    restart: unless-stopped
+    networks:
+      - media-stack
+
+networks:
+  media-stack:
+    external: true
+

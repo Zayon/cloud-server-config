@@ -1,5 +1,16 @@
 source_directories:
-    - /home/zayon/containers_data
+    - /home/zayon/cloud-server-config/docker-configs/secrets
+    - /home/zayon/containers_data/nextcloud/data/
+    - /home/zayon/containers_data/nextcloud/config/www/nextcloud/config/
+    - /home/zayon/containers_data/onlyoffice/
+    - /home/zayon/containers_data/mariadb/
+    - /home/zayon/containers_data/memos/
+    - /home/zayon/containers_data/ntfy/
+    - /home/zayon/containers_data/swag/nginx
+    - /home/zayon/containers_data/syncthing/
+    - /home/zayon/containers_data/vaultwarden/
+    - /home/zayon/containers_data/vikunja/
+    - /home/zayon/minecraft-server/
 
 repositories:
     - path: ssh://pi@localhost:65522/mnt/backup/tidus-backups

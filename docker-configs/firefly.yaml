@@ -1,0 +1,31 @@
+name: firefly
+
+services:
+  firefly:
+    container_name: firefly
+    env_file:
+      - common.env
+      - secrets/firefly.secrets
+    hostname: "${DOCKER_HOSTNAME}-firefly"
+    image: fireflyiii/core:latest
+    logging:
+      driver: json-file
+      options:
+        max-file: ${DOCKERLOGGING_MAXFILE}
+        max-size: ${DOCKERLOGGING_MAXSIZE}
+    networks:
+      - db-firefly
+      - proxy-firefly
+      - firefly
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${CONTAINER_BASE_DIR}/firefly/upload:/var/www/html/storage/upload
+
+networks:
+  db-firefly:
+    external: true
+
+  proxy-firefly:
+    external: true
+

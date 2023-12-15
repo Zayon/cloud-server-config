@@ -1,0 +1,19 @@
+name: prowlarr
+services:
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    env_file:
+      - common.env
+    environment:
+      - UMASK=002
+    volumes:
+      - ${CONTAINER_BASE_DIR}/prowlarr/:/config
+    restart: unless-stopped
+    networks:
+      - media-stack
+
+networks:
+  media-stack:
+    external: true
+

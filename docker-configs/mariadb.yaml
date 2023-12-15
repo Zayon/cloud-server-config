@@ -19,6 +19,8 @@ services:
       - db-vaultwarden
       - db-onlyoffice
       - db-bookstack
+      - db-firefly
+      - db-pma
     restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -36,5 +38,9 @@ networks:
   db-onlyoffice:
     external: true
   db-bookstack:
+    external: true
+  db-firefly:
+    external: true
+  db-pma:
     external: true
 

@@ -1,0 +1,14 @@
+name: watchtower
+services:
+  watchtower:
+    container_name: watchtower
+    hostname: "${DOCKER_HOSTNAME}-watchtower"
+    image: containrrr/watchtower
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    env_file:
+      - secrets/watchtower.secrets
+    environment:
+      WATCHTOWER_NOTIFICATION_REPORT: true
+
